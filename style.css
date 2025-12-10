@@ -1,0 +1,328 @@
+:root {
+    --bg-color: #f0f2f5;
+    --face-white: #ffffff;
+    --baymax-dark: #1a1b1e;
+    --combat-red: #ff4757;
+    --heal-green: #2ed573;
+    --thinking-blue: #70a1ff;
+    --shadow-soft: rgba(0, 0, 0, 0.08);
+    --shadow-deep: rgba(0, 0, 0, 0.15);
+    --highlight: rgba(255, 255, 255, 1);
+}
+
+body {
+    width: 230px; /* Reduced width */
+    height: 198px; /* Reduced height */
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    /* This creates the non-rectangular card look */
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 800px; /* Adds 3D space for children to exist in */
+}
+
+.main-container {
+    width: 200px; /* Reduced width */
+    height: 250px; /* Reduced height */
+    background: var(--bg-color);
+    border-radius: 35px; /* Super round corners */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    /* Subtle border to define edges */
+    border: 1px solid rgba(255,255,255,0.5);
+}
+
+/* --- THE FACE (The Soul) --- */
+.face-container {
+    width: 180px; /* Wider face */
+    height: 115px; /* Shorter face */
+    /* 3D Gradient: Lighter at the top-left, simulating a light source */
+    background: radial-gradient(circle at 40% 40%, var(--face-white) 40%, #e8eaed 100%);
+    border-radius: 50%; /* Perfect oval shape */
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    
+    /* 3D Soft Lighting */
+    box-shadow:
+        inset 5px 5px 10px var(--highlight),       /* Inner top-left highlight */
+        inset -3px -3px 10px var(--shadow-soft),   /* Inner bottom-right shadow */
+        -10px -10px 20px rgba(255, 255, 255, 0.7), /* Outer top-left glow */
+        10px 10px 20px var(--shadow-deep);         /* Outer bottom-right shadow */
+        
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy transition */
+    animation: idleSway 8s ease-in-out infinite;
+}
+
+.face-container:hover {
+    transform: scale(1.05) rotateX(10deg) rotateY(-5deg);
+    box-shadow: 
+        inset 5px 5px 10px var(--highlight), inset -3px -3px 10px var(--shadow-soft),
+        -15px -15px 30px rgba(255, 255, 255, 1),
+        15px 15px 30px var(--shadow-deep);
+}
+
+.face-container:active {
+    transform: scale(0.95);
+}
+
+/* --- FEATURES --- */
+.face-features {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Organic Blinking handled here, now slower */
+    animation: blinkEyes 8s infinite; 
+}
+
+.eye {
+    width: 19px;
+    height: 19px;
+    background-color: var(--baymax-dark);
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.bridge {
+    width: 55px;
+    height: 3px;
+    background-color: var(--baymax-dark);
+    margin: 0 -2px;
+    border-radius: 2px;
+}
+
+/* Status Text */
+.status-indicator {
+    position: absolute;
+    bottom: 25px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #b0b3b8;
+    pointer-events: none;
+    transition: all 0.3s;
+}
+
+/* --- STATES --- */
+
+/* 1. LISTENING (Heartbeat Red) */
+.face-container.listening {
+    animation: heartbeat 1.5s infinite ease-in-out; /* Replaces float */
+    box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.1), 0 10px 30px rgba(255, 71, 87, 0.3);
+}
+.face-container.listening .eye, 
+.face-container.listening .bridge {
+    background-color: var(--combat-red);
+}
+.face-container.listening .status-indicator {
+    color: var(--combat-red);
+    bottom: 20px;
+}
+
+/* 2. SPEAKING (Talking Bounce) */
+.face-container.speaking {
+    animation: talkBounce 0.4s infinite alternate;
+    border: 2px solid rgba(46, 213, 115, 0.1);
+}
+.face-container.speaking .status-indicator {
+    color: var(--heal-green);
+    text-shadow: 0 0 10px rgba(46, 213, 115, 0.4);
+}
+
+/* 3. THINKING/PROCESSING (Scanning) */
+.face-container.thinking .face-features {
+    animation: scanEyes 1.5s infinite ease-in-out;
+}
+.face-container.thinking .status-indicator {
+    color: var(--thinking-blue);
+}
+
+/* 4. HAPPY (Eyes squint up) */
+.face-container.happy .face-features {
+    animation: happySquint 1.2s ease-out;
+}
+.face-container.happy .status-indicator {
+    color: var(--heal-green);
+}
+
+/* 5. CURIOUS (Head tilt) */
+.face-container.curious {
+    animation: curiousTilt 3s ease-in-out;
+}
+
+
+/* --- Reset Button --- */
+#reset-btn {
+    position: absolute;
+    bottom: 30px;
+    opacity: 0.5; /* Subtle when idle */
+    transition: all 0.4s;
+}
+
+#reset-btn:hover {
+    opacity: 1;
+    background: var(--thinking-blue);
+    box-shadow: 0 8px 20px rgba(112, 161, 255, 0.3);
+}
+
+/* --- CONTROLS --- */
+.controls-area {
+    position: absolute;
+    bottom: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: #ffffff;
+    color: #555;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: 0.3s;
+    opacity: 0; 
+    transform: translateY(10px);
+}
+
+/* Show button with animation when needed */
+.icon-btn:not(.hidden) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.icon-btn:hover {
+    background: #ff4757;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 71, 87, 0.3);
+}
+
+/* --- OVERLAYS (Glassmorphism) --- */
+.overlay {
+    position: absolute; inset: 0;
+    background: rgba(240, 242, 245, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; pointer-events: none;
+    transition: 0.3s;
+}
+.overlay:not(.hidden) { opacity: 1; pointer-events: auto; }
+
+.setup-card {
+    background: white;
+    padding: 25px;
+    border-radius: 25px;
+    width: 75%;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    transform: scale(0.9);
+    transition: 0.3s;
+}
+.overlay:not(.hidden) .setup-card { transform: scale(1); }
+
+.setup-card h3 { margin: 0 0 5px 0; color: #333; }
+.setup-card p { margin: 0 0 20px 0; font-size: 12px; color: #888; }
+
+input {
+    width: 100%; padding: 12px;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    outline: none;
+    transition: 0.3s;
+}
+input:focus { border-color: var(--baymax-dark); }
+
+button#save-key-btn, button#fix-perm-btn {
+    background: var(--baymax-dark);
+    color: white; border: none;
+    padding: 12px 25px;
+    border-radius: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+.error-card button { background: var(--combat-red); }
+
+/* --- ANIMATIONS --- */
+
+/* Idle Float */
+@keyframes idleSway {
+    0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+    25% { transform: translateY(-5px) rotateX(5deg) rotateY(3deg); }
+    50% { transform: translateY(0) rotateX(0) rotateY(-2deg); }
+    75% { transform: translateY(3px) rotateX(-4deg) rotateY(0); }
+}
+
+/* Organic Blink (Stays open longer, blinks fast) */
+@keyframes blinkEyes {
+    0%, 95%, 100% { transform: scaleY(1); }
+    97% { transform: scaleY(0.1); }
+    /* Cute Double blink */
+    25%, 27% { transform: scaleY(0.1); } /* Keep this quick double blink */
+    26%, 28% { transform: scaleY(1); }
+}
+
+/* Heartbeat for Listening */
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    15% { transform: scale(1.04); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.04); }
+    60% { transform: scale(1); }
+    100% { transform: scale(1); }
+}
+
+/* Scanning Eyes */
+@keyframes scanEyes {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+/* Talking Bounce */
+@keyframes talkBounce {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.03); }
+}
+
+/* --- NEW EMOTION ANIMATIONS --- */
+
+/* Happy Squint */
+@keyframes happySquint {
+    0%, 100% { transform: translateY(0) scaleY(1); }
+    30%, 70% { transform: translateY(2px) scaleY(0.8); } /* Eyes move up slightly and squint */
+}
+
+/* Curious Head Tilt */
+@keyframes curiousTilt {
+    0% { transform: rotate(0deg); }
+    30% { transform: rotate(-8deg); } /* Tilt left */
+    60% { transform: rotate(8deg); } /* Tilt right */
+    80% { transform: rotate(0deg); } /* Straighten */
+    100% { transform: rotate(0deg); }
+}
